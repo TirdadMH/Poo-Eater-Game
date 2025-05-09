@@ -36,11 +36,43 @@ private:
 	void UpdateModel();
 	/********************************/
 	/*  User Functions              */
+	void DrawFace(int x, int y);
+	void DrawTrash(int x, int y);
+	int ClampScreenX(int x, int width);
+	int ClampScreenY(int y, int height);
+	bool IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1);
+	void DrawGameOver(int x, int y);
+	void DrawTitleScreen(int x, int y);
+	bool IsGameStarted = false;
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	int dudeX = 237;
+	int dudeY = 412;
+	int dudeWidth = 20;
+	int dudeHeight = 20;
+
+	int trash0X = 542;
+	int trash0Y = 96;
+
+	int trash1X = 738;
+	int trash1Y = 448;
+
+	int trash2X = 412;
+	int trash2Y = 206;
+
+	int trash3X = 116;
+	int trash3Y = 97;
+
+	int trashWidth = 24;
+	int trashHeight = 24;
+
+	bool trash0IsCollected = false;
+	bool trash1IsCollected = false;
+	bool trash2IsCollected = false;
+	bool trash3IsCollected = false;
 	/********************************/
 };
