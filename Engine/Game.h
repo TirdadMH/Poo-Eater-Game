@@ -23,6 +23,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Trash.h"
 
 class Game
 {
@@ -38,12 +39,14 @@ private:
 	/*  User Functions              */
 	void DrawFace(int x, int y);
 	void DrawTrash(int x, int y);
-	int ClampScreenX(int x, int width);
-	int ClampScreenY(int y, int height);
+	int ClampScreenX(int x, int width, int mode, int direction);
+	int ClampScreenY(int y, int height, int mode, int direction);
 	bool IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1);
 	void DrawGameOver(int x, int y);
 	void DrawTitleScreen(int x, int y);
 	bool IsGameStarted = false;
+	int SetTrashDirectionX(int direction, int trashX);
+	int SetTrashDirectionY(int direction, int trashY);
 	/********************************/
 private:
 	MainWindow& wnd;
@@ -54,6 +57,11 @@ private:
 	int dudeY = 412;
 	int dudeWidth = 20;
 	int dudeHeight = 20;
+
+	Trash trash0;
+	Trash trash1;
+	Trash trash2;
+	Trash trash3;
 
 	int trash0X = 542;
 	int trash0Y = 96;
@@ -74,5 +82,10 @@ private:
 	bool trash1IsCollected = false;
 	bool trash2IsCollected = false;
 	bool trash3IsCollected = false;
+
+	int trash0D;
+	int trash1D;
+	int trash2D;
+	int trash3D;
 	/********************************/
 };

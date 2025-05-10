@@ -32,6 +32,7 @@ Game::Game( MainWindow& wnd )
 	std::mt19937 rng(rd());
 	std::uniform_int_distribution<int> xDist(0, 770);
 	std::uniform_int_distribution<int> yDist(0, 570);
+	std::uniform_int_distribution<int> direction(0, 3);
 
 	trash0X = xDist(rng);
 	trash0Y = yDist(rng);
@@ -44,6 +45,11 @@ Game::Game( MainWindow& wnd )
 
 	trash3X = xDist(rng);
 	trash3Y = yDist(rng);
+
+	trash0D = direction(rng);
+	trash1D = direction(rng);
+	trash2D = direction(rng);
+	trash3D = direction(rng);
 }
 
 void Game::Go()
@@ -70,8 +76,32 @@ void Game::UpdateModel()
 		if (wnd.kbd.KeyIsPressed(VK_DOWN))
 			dudeY += 2;
 
-		dudeX = ClampScreenX(dudeX, dudeWidth);
-		dudeY = ClampScreenY(dudeY, dudeHeight);
+		trash0X = SetTrashDirectionX(trash0D, trash0X);
+		trash0Y = SetTrashDirectionY(trash0D, trash0Y);
+
+		trash1X = SetTrashDirectionX(trash1D, trash1X);
+		trash1Y = SetTrashDirectionY(trash1D, trash1Y);
+
+		trash2X = SetTrashDirectionX(trash2D, trash2X);
+		trash2Y = SetTrashDirectionY(trash2D, trash2Y);
+
+		trash3X = SetTrashDirectionX(trash3D, trash3X);
+		trash3Y = SetTrashDirectionY(trash3D, trash3Y);
+
+		dudeX = ClampScreenX(dudeX, dudeWidth, 0, -1);
+		dudeY = ClampScreenY(dudeY, dudeHeight, 0, -1);
+
+		trash0D = ClampScreenX(trash0X, trashWidth, 1, trash0D);
+		trash1D = ClampScreenX(trash1X, trashWidth, 1, trash1D);
+		trash2D = ClampScreenX(trash2X, trashWidth, 1, trash2D);
+		trash3D = ClampScreenX(trash3X, trashWidth, 1, trash3D);
+
+		trash0D = ClampScreenY(trash0Y, trashHeight, 1, trash0D);
+		trash1D = ClampScreenY(trash1Y, trashHeight, 1, trash1D);
+		trash2D = ClampScreenY(trash2Y, trashHeight, 1, trash2D);
+		trash3D = ClampScreenY(trash3Y, trashHeight, 1, trash3D);
+
+
 
 		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash0X, trash0Y, trashWidth, trashHeight))
 			trash0IsCollected = true;
@@ -29022,28 +29052,91 @@ void Game::DrawTitleScreen(int x, int y)
 
 }
 
-int Game::ClampScreenX(int x, int width)
+int Game::SetTrashDirectionX(int direction, int trashX)
+{
+	
+	if (direction == 0 || direction == 3)
+		trashX += 1;
+	else if (direction == 1 || direction == 2)
+		trashX -= 1;
+
+	return trashX;
+}
+
+int Game::SetTrashDirectionY(int direction, int trashY)
+{
+	if (direction == 0 || direction == 1)
+		trashY -= 1;
+	else if (direction == 2 || direction == 3)
+		trashY += 1;
+
+	return trashY;
+}
+
+int Game::ClampScreenX(int x, int width, int mode, int direction)
 {
 	const int left_side = x;
 	const int right_side = left_side + width;
-	if (left_side < 0)
-		return 0;
-	else if (right_side >= gfx.ScreenWidth)
-		return (gfx.ScreenWidth - 1) - width;
-	else
-		return x;
+	if (mode == 0)
+	{
+		if (left_side < 0)
+			return 0;
+		else if (right_side >= gfx.ScreenWidth)
+			return (gfx.ScreenWidth - 1) - width;
+		else
+			return x;
+	}
+	else if (mode == 1)
+	{
+		if (left_side <= 0)
+		{
+			if (direction == 2)
+				direction = 3;
+			if (direction == 1)
+				direction = 0;
+		}
+		else if (right_side >= gfx.ScreenWidth)
+		{
+			if (direction == 3)
+				direction = 2;
+			if (direction == 0)
+				direction = 1;
+		}
+		return direction;
+	}
 }
 
-int Game::ClampScreenY(int y, int height)
+int Game::ClampScreenY(int y, int height, int mode, int direction)
 {
 	const int up_side = y;
 	const int down_side = up_side + height;
-	if (up_side < 0)
-		return 0;
-	else if (down_side >= gfx.ScreenHeight)
-		return (gfx.ScreenHeight - 1) - height;
-	else
-		return y;
+	if (mode == 0)
+	{
+		if (up_side < 0)
+			return 0;
+		else if (down_side >= gfx.ScreenHeight)
+			return (gfx.ScreenHeight - 1) - height;
+		else
+			return y;
+	}
+	else if (mode == 1)
+	{
+		if (up_side <= 0)
+		{
+			if (direction == 0)
+				direction = 3;
+			if (direction == 1)
+				direction = 2;
+		}
+		else if (down_side >= gfx.ScreenHeight)
+		{
+			if (direction == 3)
+				direction = 0;
+			if (direction == 2)
+				direction = 1;
+		}
+		return direction;
+	}
 }
 
 bool Game::IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1)
@@ -29059,5 +29152,3 @@ bool Game::IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, i
 		bottom0 >= y1 &&
 		y0 <= bottom1);
 }
-
-
