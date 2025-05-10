@@ -24,6 +24,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include "Trash.h"
+#include "Dude.h"
 
 class Game
 {
@@ -39,11 +40,9 @@ private:
 	/*  User Functions              */
 	void DrawFace(int x, int y);
 	void DrawTrash(int x, int y);
-	int ClampScreenX(int x, int width);
-	int ClampScreenY(int y, int height);
-	bool IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1);
 	void DrawGameOver(int x, int y);
 	void DrawTitleScreen(int x, int y);
+
 	bool IsGameStarted = false;
 	/********************************/
 private:
@@ -51,17 +50,10 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
-	int dudeX = 237;
-	int dudeY = 412;
-	int dudeWidth = 20;
-	int dudeHeight = 20;
-
+	Dude dude;
 	Trash trash0;
 	Trash trash1;
 	Trash trash2;
 	Trash trash3;
-
-	int trashWidth = 24;
-	int trashHeight = 24;
 	/********************************/
 };

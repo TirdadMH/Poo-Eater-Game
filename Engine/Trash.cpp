@@ -58,3 +58,19 @@ void Trash::ClampScreen()
 			direction = 1;
 	}
 }
+
+void Trash::ProcessConsumption(int input_x, int input_y, int input_height, int input_width)
+{
+	const int right0 = input_x + input_height;
+	const int bottom0 = input_y + input_height;
+
+	const int right1 = x + Width;
+	const int bottom1 = y + Height;
+
+	if (right0 >= x &&
+		input_x <= right1 &&
+		bottom0 >= y &&
+		input_y <= bottom1)
+		trashIsCollected = true;
+
+}

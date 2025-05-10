@@ -62,36 +62,27 @@ void Game::UpdateModel()
 	if (IsGameStarted)
 	{
 		if (wnd.kbd.KeyIsPressed(VK_RIGHT))
-			dudeX += 2;
+			dude.x += 2;
 
 		if (wnd.kbd.KeyIsPressed(VK_LEFT))
-			dudeX -= 2;
+			dude.x -= 2;
 
 		if (wnd.kbd.KeyIsPressed(VK_UP))
-			dudeY -= 2;
+			dude.y -= 2;
 
 		if (wnd.kbd.KeyIsPressed(VK_DOWN))
-			dudeY += 2;
+			dude.y += 2;
 
+		dude.Update();
 		trash0.Update();
 		trash1.Update();
 		trash2.Update();
 		trash3.Update();
 
-		dudeX = ClampScreenX(dudeX, dudeWidth);
-		dudeY = ClampScreenY(dudeY, dudeHeight);
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash0.x, trash0.y, trashWidth, trashHeight))
-			trash0.trashIsCollected = true;
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash1.x, trash1.y, trashWidth, trashHeight))
-			trash1.trashIsCollected = true;
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash2.x, trash2.y, trashWidth, trashHeight))
-			trash2.trashIsCollected = true;
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash3.x, trash3.y, trashWidth, trashHeight))
-			trash3.trashIsCollected = true;
+		trash0.ProcessConsumption(dude.x, dude.y, Dude::width, Dude::height);
+		trash1.ProcessConsumption(dude.x, dude.y, Dude::width, Dude::height);
+		trash2.ProcessConsumption(dude.x, dude.y, Dude::width, Dude::height);
+		trash3.ProcessConsumption(dude.x, dude.y, Dude::width, Dude::height);
 	}
 	else
 		if (wnd.kbd.KeyIsPressed(VK_RETURN))
@@ -111,7 +102,7 @@ void Game::ComposeFrame()
 			DrawGameOver(358, 268);
 		else
 		{
-			DrawFace(dudeX, dudeY);
+			DrawFace(dude.x, dude.y);
 			if (!trash0.trashIsCollected)
 				DrawTrash(trash0.x, trash0.y);
 			if (!trash1.trashIsCollected)
@@ -124,46 +115,6 @@ void Game::ComposeFrame()
 	}
 	
 }
-
-int Game::ClampScreenX(int x, int width)
-{
-	const int left_side = x;
-	const int right_side = left_side + width;
-	if (left_side < 0)
-		return 0;
-	else if (right_side >= gfx.ScreenWidth)
-		return (gfx.ScreenWidth - 1) - width;
-	else
-		return x;
-
-}
-
-int Game::ClampScreenY(int y, int height)
-{
-	const int up_side = y;
-	const int down_side = up_side + height;
-	if (up_side < 0)
-		return 0;
-	else if (down_side >= gfx.ScreenHeight)
-		return (gfx.ScreenHeight - 1) - height;
-	else
-		return y;
-}
-
-bool Game::IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1)
-{
-	const int right0 = x0 + width0;
-	const int bottom0 = y0 + height0;
-
-	const int right1 = x1 + width1;
-	const int bottom1 = y1 + height1;
-
-	return (right0 >= x1 &&
-		x0 <= right1 &&
-		bottom0 >= y1 &&
-		y0 <= bottom1);
-}
-
 
 void Game::DrawFace(int x, int y)
 {
