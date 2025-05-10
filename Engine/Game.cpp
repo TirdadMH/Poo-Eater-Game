@@ -22,10 +22,7 @@
 #include "Game.h"
 #include <random>
 
-Game::Game( MainWindow& wnd )
-	:
-	wnd( wnd ),
-	gfx( wnd )
+Game::Game( MainWindow& wnd ) : wnd( wnd ), gfx( wnd )
 {
 	std::random_device rd;
 
@@ -34,22 +31,22 @@ Game::Game( MainWindow& wnd )
 	std::uniform_int_distribution<int> yDist(0, 570);
 	std::uniform_int_distribution<int> direction(0, 3);
 
-	trash0X = xDist(rng);
-	trash0Y = yDist(rng);
+	trash0.x = xDist(rng);
+	trash0.y = yDist(rng);
 
-	trash1X = xDist(rng);
-	trash1Y = yDist(rng);
+	trash1.x = xDist(rng);
+	trash1.y = yDist(rng);
 
-	trash2X = xDist(rng);
-	trash2Y = yDist(rng);
+	trash2.x = xDist(rng);
+	trash2.y = yDist(rng);
 
-	trash3X = xDist(rng);
-	trash3Y = yDist(rng);
+	trash3.x = xDist(rng);
+	trash3.y = yDist(rng);
 
-	trash0D = direction(rng);
-	trash1D = direction(rng);
-	trash2D = direction(rng);
-	trash3D = direction(rng);
+	trash0.direction = direction(rng);
+	trash1.direction = direction(rng);
+	trash2.direction = direction(rng);
+	trash3.direction = direction(rng);
 }
 
 void Game::Go()
@@ -76,44 +73,25 @@ void Game::UpdateModel()
 		if (wnd.kbd.KeyIsPressed(VK_DOWN))
 			dudeY += 2;
 
-		trash0X = SetTrashDirectionX(trash0D, trash0X);
-		trash0Y = SetTrashDirectionY(trash0D, trash0Y);
+		trash0.Update();
+		trash1.Update();
+		trash2.Update();
+		trash3.Update();
 
-		trash1X = SetTrashDirectionX(trash1D, trash1X);
-		trash1Y = SetTrashDirectionY(trash1D, trash1Y);
+		dudeX = ClampScreenX(dudeX, dudeWidth);
+		dudeY = ClampScreenY(dudeY, dudeHeight);
 
-		trash2X = SetTrashDirectionX(trash2D, trash2X);
-		trash2Y = SetTrashDirectionY(trash2D, trash2Y);
+		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash0.x, trash0.y, trashWidth, trashHeight))
+			trash0.trashIsCollected = true;
 
-		trash3X = SetTrashDirectionX(trash3D, trash3X);
-		trash3Y = SetTrashDirectionY(trash3D, trash3Y);
+		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash1.x, trash1.y, trashWidth, trashHeight))
+			trash1.trashIsCollected = true;
 
-		dudeX = ClampScreenX(dudeX, dudeWidth, 0, -1);
-		dudeY = ClampScreenY(dudeY, dudeHeight, 0, -1);
+		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash2.x, trash2.y, trashWidth, trashHeight))
+			trash2.trashIsCollected = true;
 
-		trash0D = ClampScreenX(trash0X, trashWidth, 1, trash0D);
-		trash1D = ClampScreenX(trash1X, trashWidth, 1, trash1D);
-		trash2D = ClampScreenX(trash2X, trashWidth, 1, trash2D);
-		trash3D = ClampScreenX(trash3X, trashWidth, 1, trash3D);
-
-		trash0D = ClampScreenY(trash0Y, trashHeight, 1, trash0D);
-		trash1D = ClampScreenY(trash1Y, trashHeight, 1, trash1D);
-		trash2D = ClampScreenY(trash2Y, trashHeight, 1, trash2D);
-		trash3D = ClampScreenY(trash3Y, trashHeight, 1, trash3D);
-
-
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash0X, trash0Y, trashWidth, trashHeight))
-			trash0IsCollected = true;
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash1X, trash1Y, trashWidth, trashHeight))
-			trash1IsCollected = true;
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash2X, trash2Y, trashWidth, trashHeight))
-			trash2IsCollected = true;
-
-		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash3X, trash3Y, trashWidth, trashHeight))
-			trash3IsCollected = true;
+		if (IsColiding(dudeX, dudeY, dudeWidth, dudeHeight, trash3.x, trash3.y, trashWidth, trashHeight))
+			trash3.trashIsCollected = true;
 	}
 	else
 		if (wnd.kbd.KeyIsPressed(VK_RETURN))
@@ -126,26 +104,66 @@ void Game::ComposeFrame()
 		DrawTitleScreen(325, 211);
 	else
 	{
-		if (trash0IsCollected &&
-			trash1IsCollected &&
-			trash2IsCollected &&
-			trash3IsCollected)
+		if (trash0.trashIsCollected &&
+			trash1.trashIsCollected &&
+			trash2.trashIsCollected &&
+			trash3.trashIsCollected)
 			DrawGameOver(358, 268);
 		else
 		{
 			DrawFace(dudeX, dudeY);
-			if (!trash0IsCollected)
-				DrawTrash(trash0X, trash0Y);
-			if (!trash1IsCollected)
-				DrawTrash(trash1X, trash1Y);
-			if (!trash2IsCollected)
-				DrawTrash(trash2X, trash2Y);
-			if (!trash3IsCollected)
-				DrawTrash(trash3X, trash3Y);
+			if (!trash0.trashIsCollected)
+				DrawTrash(trash0.x, trash0.y);
+			if (!trash1.trashIsCollected)
+				DrawTrash(trash1.x, trash1.y);
+			if (!trash2.trashIsCollected)
+				DrawTrash(trash2.x, trash2.y);
+			if (!trash3.trashIsCollected)
+				DrawTrash(trash3.x, trash3.y);
 		}
 	}
 	
 }
+
+int Game::ClampScreenX(int x, int width)
+{
+	const int left_side = x;
+	const int right_side = left_side + width;
+	if (left_side < 0)
+		return 0;
+	else if (right_side >= gfx.ScreenWidth)
+		return (gfx.ScreenWidth - 1) - width;
+	else
+		return x;
+
+}
+
+int Game::ClampScreenY(int y, int height)
+{
+	const int up_side = y;
+	const int down_side = up_side + height;
+	if (up_side < 0)
+		return 0;
+	else if (down_side >= gfx.ScreenHeight)
+		return (gfx.ScreenHeight - 1) - height;
+	else
+		return y;
+}
+
+bool Game::IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1)
+{
+	const int right0 = x0 + width0;
+	const int bottom0 = y0 + height0;
+
+	const int right1 = x1 + width1;
+	const int bottom1 = y1 + height1;
+
+	return (right0 >= x1 &&
+		x0 <= right1 &&
+		bottom0 >= y1 &&
+		y0 <= bottom1);
+}
+
 
 void Game::DrawFace(int x, int y)
 {
@@ -29049,106 +29067,4 @@ void Game::DrawTitleScreen(int x, int y)
 	gfx.PutPixel(147 + x, 174 + y, 208, 34, 34);
 	gfx.PutPixel(148 + x, 174 + y, 208, 34, 34);
 	gfx.PutPixel(149 + x, 174 + y, 208, 34, 34);
-
-}
-
-int Game::SetTrashDirectionX(int direction, int trashX)
-{
-	
-	if (direction == 0 || direction == 3)
-		trashX += 1;
-	else if (direction == 1 || direction == 2)
-		trashX -= 1;
-
-	return trashX;
-}
-
-int Game::SetTrashDirectionY(int direction, int trashY)
-{
-	if (direction == 0 || direction == 1)
-		trashY -= 1;
-	else if (direction == 2 || direction == 3)
-		trashY += 1;
-
-	return trashY;
-}
-
-int Game::ClampScreenX(int x, int width, int mode, int direction)
-{
-	const int left_side = x;
-	const int right_side = left_side + width;
-	if (mode == 0)
-	{
-		if (left_side < 0)
-			return 0;
-		else if (right_side >= gfx.ScreenWidth)
-			return (gfx.ScreenWidth - 1) - width;
-		else
-			return x;
-	}
-	else if (mode == 1)
-	{
-		if (left_side <= 0)
-		{
-			if (direction == 2)
-				direction = 3;
-			if (direction == 1)
-				direction = 0;
-		}
-		else if (right_side >= gfx.ScreenWidth)
-		{
-			if (direction == 3)
-				direction = 2;
-			if (direction == 0)
-				direction = 1;
-		}
-		return direction;
-	}
-}
-
-int Game::ClampScreenY(int y, int height, int mode, int direction)
-{
-	const int up_side = y;
-	const int down_side = up_side + height;
-	if (mode == 0)
-	{
-		if (up_side < 0)
-			return 0;
-		else if (down_side >= gfx.ScreenHeight)
-			return (gfx.ScreenHeight - 1) - height;
-		else
-			return y;
-	}
-	else if (mode == 1)
-	{
-		if (up_side <= 0)
-		{
-			if (direction == 0)
-				direction = 3;
-			if (direction == 1)
-				direction = 2;
-		}
-		else if (down_side >= gfx.ScreenHeight)
-		{
-			if (direction == 3)
-				direction = 0;
-			if (direction == 2)
-				direction = 1;
-		}
-		return direction;
-	}
-}
-
-bool Game::IsColiding(int x0, int y0, int width0, int height0, int x1, int y1, int width1, int height1)
-{
-	const int right0 = x0 + width0;
-	const int bottom0 = y0 + height0;
-
-	const int right1 = x1 + width1;
-	const int bottom1 = y1 + height1;
-
-	return (right0 >= x1 &&
-		x0 <= right1 &&
-		bottom0 >= y1 &&
-		y0 <= bottom1);
 }
