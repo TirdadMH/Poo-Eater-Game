@@ -1,4 +1,6 @@
 #pragma once
+#include "Graphics.h"
+#include "Dude.h"
 
 class Trash 
 {
@@ -6,7 +8,8 @@ public:
 	void Update();
 	void SetTrashDirection();
 	void ClampScreen();
-	void ProcessConsumption(int x, int y, int height, int width);
+	void ProcessConsumption(const Dude& dude);
+	void Draw(Graphics& gfx) const;
 
 	int x;
 	int y;
