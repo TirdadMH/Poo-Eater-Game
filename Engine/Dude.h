@@ -5,7 +5,7 @@ class Dude
 public:
 	void Update();
 	void ClampScreen();
-	void Draw(Graphics& gfx);
+	void Draw(Graphics& gfx) const;
 
 	int x = 237;
 	int y = 412;

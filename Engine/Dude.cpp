@@ -24,7 +24,7 @@ void Dude::ClampScreen()
 		y = (Graphics::ScreenHeight - 1) - height;
 }
 
-void Dude::Draw(Graphics& gfx)
+void Dude::Draw(Graphics& gfx) const
 
 {
 	gfx.PutPixel(7 + x, 0 + y, 0, 0, 0);
