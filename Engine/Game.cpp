@@ -80,24 +80,6 @@ void Game::ComposeFrame()
 				if (!trash[i].IsCollected())
 					trash[i].Draw(gfx);
 		}
-		
-		
-		/*bool allCollected = true;
-		for (int i = 0; i < nTrash; i++)
-		{
-			allCollected = allCollected && trash[i].IsCollected();
-		}
-		if (allCollected)
-			DrawGameOver(358, 268);
-		else
-		{
-			dude.Draw(gfx);
-			for (int i = 0; i < nTrash; i++)
-			{
-				if (!trash[i].IsCollected())
-					trash[i].Draw(gfx);
-			}
-		}*/
 	}
 }
 
