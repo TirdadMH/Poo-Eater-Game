@@ -42,21 +42,21 @@ private:
 	/*  User Functions              */
 	void DrawGameOver(int x, int y);
 	void DrawTitleScreen(int x, int y);
-
-	bool IsGameStarted = false;
 	/********************************/
 private:
 	MainWindow& wnd;
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	bool IsGameStarted = false;
+	bool HasGameEnded = false;
 	std::random_device rd;
 	std::mt19937 rng;
 	std::uniform_int_distribution<int> xDist;
 	std::uniform_int_distribution<int> yDist;
 	std::uniform_int_distribution<int> direction;
 	Dude dude;
-	static int constexpr nTrash = 30;
+	static int constexpr nTrash = 10;
 	Trash trash[nTrash];
 	Rect rectangle;
 	/********************************/

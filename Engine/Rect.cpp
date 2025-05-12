@@ -9,11 +9,13 @@ Rect::Rect() : rd(), rng(rd()), xDist(0, 770), yDist(0, 570)
 	y = yDist(rng);
 }
 
-void Rect::Draw(Graphics& gfx) const
+void Rect::Draw(Graphics& gfx)
 {
+	DrawScore(gfx);
+	MakeColors();
 	for (int i = x; i < x + width; i++)
 		for (int j = y; j < y + height; j++)
-			gfx.PutPixel(i, j, Colors::Magenta);
+			gfx.PutPixel(i, j, r, 255, 255);
 }
 
 void Rect::ProcessConsumption(const Dude& dude)
@@ -28,7 +30,10 @@ void Rect::ProcessConsumption(const Dude& dude)
 		dude.getDudeX() <= right1 &&
 		bottom0 >= y &&
 		dude.getDudeY() <= bottom1)
+	{
 		IsRectCollected = true;
+		score++;
+	}
 }
 
 void Rect::Update(const Dude& dude)
@@ -40,4 +45,19 @@ void Rect::Update(const Dude& dude)
 		y = yDist(rng);
 		IsRectCollected = false;
 	}
+}
+
+void Rect::MakeColors()
+{
+	if (r <= 255)
+		r += 2;
+	else
+		r = 0;
+}
+
+void Rect::DrawScore(Graphics& gfx)
+{
+	for (int i = score_x; i < (score_width + score_x) * score; i++)
+		for (int j = score_y; j < (score_height + score_y); j++)
+			gfx.PutPixel(i, j, 255, 255, 0);
 }

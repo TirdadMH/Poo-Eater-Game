@@ -65,8 +65,24 @@ void Game::ComposeFrame()
 		DrawTitleScreen(325, 211);
 	else
 	{
-		rectangle.Draw(gfx);
-		bool allCollected = true;
+		for (int i = 0; i < nTrash; i++)
+			if (trash[i].IsCollected())
+			{
+				DrawGameOver(358, 268);
+				HasGameEnded = true;
+			}
+			
+		if (!HasGameEnded)
+		{
+			rectangle.Draw(gfx);
+			dude.Draw(gfx);
+			for (int i = 0; i < nTrash; i++)
+				if (!trash[i].IsCollected())
+					trash[i].Draw(gfx);
+		}
+		
+		
+		/*bool allCollected = true;
 		for (int i = 0; i < nTrash; i++)
 		{
 			allCollected = allCollected && trash[i].IsCollected();
@@ -81,7 +97,7 @@ void Game::ComposeFrame()
 				if (!trash[i].IsCollected())
 					trash[i].Draw(gfx);
 			}
-		}
+		}*/
 	}
 }
 
