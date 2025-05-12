@@ -52,6 +52,7 @@ void Game::UpdateModel()
 			trash[i].Update();
 			trash[i].ProcessConsumption(dude);
 		}
+		rectangle.Update(dude);
 	}
 	else
 		if (wnd.kbd.KeyIsPressed(VK_RETURN))
@@ -64,6 +65,7 @@ void Game::ComposeFrame()
 		DrawTitleScreen(325, 211);
 	else
 	{
+		rectangle.Draw(gfx);
 		bool allCollected = true;
 		for (int i = 0; i < nTrash; i++)
 		{
@@ -81,7 +83,6 @@ void Game::ComposeFrame()
 			}
 		}
 	}
-	
 }
 
 void Game::DrawGameOver(int x, int y)

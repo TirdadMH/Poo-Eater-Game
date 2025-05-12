@@ -26,6 +26,7 @@
 #include "Trash.h"
 #include "Dude.h"
 #include <random>
+#include "Rect.h"
 
 class Game
 {
@@ -57,14 +58,6 @@ private:
 	Dude dude;
 	static int constexpr nTrash = 30;
 	Trash trash[nTrash];
-	Trash trash0;
-	Trash trash1;
-	Trash trash2;
-	Trash trash3;
-	Trash trash4;
-	Trash trash5;
-	Trash trash6;
-	Trash trash7;
-	Trash trash8;
+	Rect rectangle;
 	/********************************/
 };
