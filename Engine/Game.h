@@ -25,6 +25,7 @@
 #include "Graphics.h"
 #include "Trash.h"
 #include "Dude.h"
+#include <random>
 
 class Game
 {
@@ -48,10 +49,22 @@ private:
 	Graphics gfx;
 	/********************************/
 	/*  User Variables              */
+	std::random_device rd;
+	std::mt19937 rng;
+	std::uniform_int_distribution<int> xDist;
+	std::uniform_int_distribution<int> yDist;
+	std::uniform_int_distribution<int> direction;
 	Dude dude;
+	static int constexpr nTrash = 30;
+	Trash trash[nTrash];
 	Trash trash0;
 	Trash trash1;
 	Trash trash2;
 	Trash trash3;
+	Trash trash4;
+	Trash trash5;
+	Trash trash6;
+	Trash trash7;
+	Trash trash8;
 	/********************************/
 };

@@ -1,10 +1,43 @@
 #include "Dude.h"
 #include "Graphics.h"
+#include "MainWindow.h"
 
-void Dude::Update()
+void Dude::Update(const MainWindow& wnd)
 {
+	if (wnd.kbd.KeyIsPressed(VK_RIGHT))
+		x += speed;
+
+	if (wnd.kbd.KeyIsPressed(VK_LEFT))
+		x -= speed;
+
+	if (wnd.kbd.KeyIsPressed(VK_UP))
+		y -= speed;
+
+	if (wnd.kbd.KeyIsPressed(VK_DOWN))
+		y += speed;
 	ClampScreen();
 }
+
+int Dude::getDudeX() const
+{
+	return x;
+}
+
+int Dude::getDudeY() const
+{
+	return y;
+}
+
+int Dude::getHeight() const
+{
+	return height;
+}
+
+int Dude::getWidth() const
+{
+	return width;
+}
+
 
 void Dude::ClampScreen()
 {

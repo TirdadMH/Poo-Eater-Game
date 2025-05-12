@@ -1,16 +1,27 @@
 #include "Trash.h"
 #include "Graphics.h"
 #include "Dude.h"
+#include <assert.h>
+
+void Trash::init(int in_x, int in_y, int in_direction)
+{
+	assert(initialized == false);
+	x = in_x;
+	y = in_y;
+	direction = in_direction;
+	initialized = true;
+}
 
 void Trash::Update()
 {
+	assert(initialized == true);
 	SetTrashDirection();
 	ClampScreen();
 }
 
 void Trash::SetTrashDirection()
 {
-
+	assert(initialized == true);
 	if (direction == 0 || direction == 3)
 		x += 1;
 	else if (direction == 1 || direction == 2)
@@ -24,6 +35,7 @@ void Trash::SetTrashDirection()
 
 void Trash::ClampScreen()
 {
+	assert(initialized == true);
 	const int up_side = y;
 	const int down_side = up_side + Height;
 	const int left_side = x;
@@ -62,22 +74,30 @@ void Trash::ClampScreen()
 
 void Trash::ProcessConsumption(const Dude& dude)
 {
-	const int right0 = dude.x + dude.width;
-	const int bottom0 = dude.y + dude.height;
+	assert(initialized == true);
+	const int right0 = dude.getDudeX() + dude.getWidth();
+	const int bottom0 = dude.getDudeY() + dude.getHeight();
 
 	const int right1 = x + Width;
 	const int bottom1 = y + Height;
 
 	if (right0 >= x &&
-		dude.x <= right1 &&
+		dude.getDudeX() <= right1 &&
 		bottom0 >= y &&
-		dude.y <= bottom1)
+		dude.getDudeY() <= bottom1)
 		trashIsCollected = true;
 
 }
 
+bool Trash::IsCollected() const
+{
+	assert(initialized == true);
+	return trashIsCollected;
+}
+
 void Trash::Draw(Graphics& gfx) const
 {
+	assert(initialized == true);
 	gfx.PutPixel(14 + x, 0 + y, 138, 77, 0);
 	gfx.PutPixel(7 + x, 1 + y, 138, 77, 0);
 	gfx.PutPixel(13 + x, 1 + y, 138, 77, 0);
@@ -310,3 +330,5 @@ void Trash::Draw(Graphics& gfx) const
 	gfx.PutPixel(5 + x, 23 + y, 51, 28, 0);
 	gfx.PutPixel(6 + x, 23 + y, 51, 28, 0);
 }
+
+

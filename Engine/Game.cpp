@@ -22,31 +22,16 @@
 #include "Game.h"
 #include <random>
 
-Game::Game( MainWindow& wnd ) : wnd( wnd ), gfx( wnd )
+Game::Game( MainWindow& wnd ) : wnd( wnd ),
+								gfx( wnd ),
+								rd(),
+								rng(rd()),
+								xDist(0, 770),
+								yDist(0, 570),
+								direction(0, 3)
 {
-	std::random_device rd;
-
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> xDist(0, 770);
-	std::uniform_int_distribution<int> yDist(0, 570);
-	std::uniform_int_distribution<int> direction(0, 3);
-
-	trash0.x = xDist(rng);
-	trash0.y = yDist(rng);
-
-	trash1.x = xDist(rng);
-	trash1.y = yDist(rng);
-
-	trash2.x = xDist(rng);
-	trash2.y = yDist(rng);
-
-	trash3.x = xDist(rng);
-	trash3.y = yDist(rng);
-
-	trash0.direction = direction(rng);
-	trash1.direction = direction(rng);
-	trash2.direction = direction(rng);
-	trash3.direction = direction(rng);
+	for (int i = 0; i < nTrash; i++)
+		trash[i].init(xDist(rng), yDist(rng), direction(rng));
 }
 
 void Game::Go()
@@ -61,28 +46,12 @@ void Game::UpdateModel()
 {
 	if (IsGameStarted)
 	{
-		if (wnd.kbd.KeyIsPressed(VK_RIGHT))
-			dude.x += 2;
-
-		if (wnd.kbd.KeyIsPressed(VK_LEFT))
-			dude.x -= 2;
-
-		if (wnd.kbd.KeyIsPressed(VK_UP))
-			dude.y -= 2;
-
-		if (wnd.kbd.KeyIsPressed(VK_DOWN))
-			dude.y += 2;
-
-		dude.Update();
-		trash0.Update();
-		trash1.Update();
-		trash2.Update();
-		trash3.Update();
-
-		trash0.ProcessConsumption(dude);
-		trash1.ProcessConsumption(dude);
-		trash2.ProcessConsumption(dude);
-		trash3.ProcessConsumption(dude);
+		dude.Update(wnd);
+		for (int i = 0; i < nTrash; i++)
+		{
+			trash[i].Update();
+			trash[i].ProcessConsumption(dude);
+		}
 	}
 	else
 		if (wnd.kbd.KeyIsPressed(VK_RETURN))
@@ -95,22 +64,21 @@ void Game::ComposeFrame()
 		DrawTitleScreen(325, 211);
 	else
 	{
-		if (trash0.trashIsCollected &&
-			trash1.trashIsCollected &&
-			trash2.trashIsCollected &&
-			trash3.trashIsCollected)
+		bool allCollected = true;
+		for (int i = 0; i < nTrash; i++)
+		{
+			allCollected = allCollected && trash[i].IsCollected();
+		}
+		if (allCollected)
 			DrawGameOver(358, 268);
 		else
 		{
 			dude.Draw(gfx);
-			if (!trash0.trashIsCollected)
-				trash0.Draw(gfx);
-			if (!trash1.trashIsCollected)
-				trash1.Draw(gfx);
-			if (!trash2.trashIsCollected)
-				trash2.Draw(gfx);
-			if (!trash3.trashIsCollected)
-				trash3.Draw(gfx);
+			for (int i = 0; i < nTrash; i++)
+			{
+				if (!trash[i].IsCollected())
+					trash[i].Draw(gfx);
+			}
 		}
 	}
 	
